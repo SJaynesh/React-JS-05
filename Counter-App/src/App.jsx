@@ -1,16 +1,14 @@
 import { useState } from "react";
 import "../public/css/App.css";
 
-
 function App() {
   // let count = 10;
   let [count, setCount] = useState(0);
 
   // Syntax : let [state, function] = useState([defaultValue]);
 
-  console.log("Type : ", typeof (count));
-  console.log("Type : ", typeof (setCount));
-
+  console.log("Type : ", typeof count);
+  console.log("Type : ", typeof setCount);
 
   const increment = () => {
     // alert("Hello World");
@@ -24,7 +22,7 @@ function App() {
     // let newCount = count - 1;
     count = count - 1;
     setCount(count);
-  }
+  };
 
   return (
     <>
@@ -34,6 +32,8 @@ function App() {
         <h3>Val : {count}</h3>
         <button onClick={increment}>Increment +</button>
         <button onClick={decrement}>Decrement -</button>
+
+        <p>My Count Value is : {count}</p>
       </div>
     </>
   );
