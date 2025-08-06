@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { createElement, useState } from "react";
 import "../public/css/App.css";
 
 function App() {
@@ -7,8 +7,15 @@ function App() {
 
   // Syntax : let [state, function] = useState([defaultValue]);
 
-  console.log("Type : ", typeof count);
-  console.log("Type : ", typeof setCount);
+  // console.log("Type : ", typeof count);
+  // console.log("Type : ", typeof setCount);
+
+  const h1Virtual = <h1 className="title">Hello Virtual DOM</h1>;
+  const h1Real = createElement("h1");
+
+  console.log(h1Virtual);
+
+  console.log(h1Real);
 
   const increment = () => {
     // alert("Hello World");
