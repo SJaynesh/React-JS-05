@@ -21,7 +21,12 @@ function App() {
     // alert("Hello World");
     // count = count + 1; // 10 + 1 = 11 + 1 = 12
     // count = 95;
-    setCount(++count);
+    setCount(count => count + 1);
+    setCount(count => count + 1);
+    setCount(count => count + 1);
+    // setCount(count + 1);
+    // setCount(count + 1);
+    // setCount(count + 1);
     // console.log("BTN is clicked...", count);
   };
 
