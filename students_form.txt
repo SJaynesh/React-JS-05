@@ -1,0 +1,9 @@
+Students:
+
+FName => text
+LName => text
+Phone => text
+Gender => Redio
+Std => DropDwon
+Hobby => Checkbox
+Image => text
