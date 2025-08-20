@@ -1,0 +1,11 @@
+Students:
+
+FName => text
+LName => text
+Email => email
+Phone => text
+Gender => Redio
+Std => DropDwon
+Hobby => Checkbox
+Image => text
+Address=> textarea
