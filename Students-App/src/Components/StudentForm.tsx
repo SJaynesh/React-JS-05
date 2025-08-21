@@ -31,18 +31,33 @@ function StudentForm() {
         '12th',
     ];
 
+    const allHobby: string[] = ["Reading", "Writing", "Sleeping", "Eating"];
+
+    type studentObject = {
+        firstName: string,
+        lastName: string,
+        email: string,
+        phone: string,
+        gender: string,
+        std: string,
+        hobby: string[]
+    }
 
     const submitStudentForm = (event: any) => {
         event.preventDefault();
 
-        console.log("First Name : ", firstName);
-        console.log("Last Name : ", lastName);
-        console.log("Email : ", email);
-        console.log("Phone : ", phone);
-        console.log("Gender : ", gender);
-        console.log("Std : ", std);
-        console.log("Hobby : ", hobby);
+        const student: studentObject = {
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            phone: phone,
+            gender: gender,
+            std: std,
+            hobby: hobby
+        };
 
+
+        console.log(student);
 
         // const fname = document.getElementById('fname') as HTMLInputElement;
 
@@ -141,14 +156,10 @@ function StudentForm() {
                             <legend className="sr-only">Checkbox variants</legend>
 
                             <div className="flex items-center mb-4">
-                                <input type="checkbox" value="Reading" onChange={getHobby} checked={hobby.includes("Reading")} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                                <label htmlFor="checkbox-1" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Reading</label>
-
-                                <input type="checkbox" value="Writing" onChange={getHobby} checked={hobby.includes("Writing")} className="ms-2 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                                <label htmlFor="checkbox-1" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Writing</label>
-
-                                <input type="checkbox" value="Sleeping" onChange={getHobby} checked={hobby.includes("Sleeping")} className="ms-2 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                                <label htmlFor="checkbox-1" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Sleeping</label>
+                                {allHobby.map((data, index) => <div className="ml-1" key={index}>
+                                    <input type="checkbox" value={data} onChange={getHobby} checked={hobby.includes(data)} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                    <label htmlFor="checkbox-1" className="ms-1 text-sm font-medium text-gray-900 dark:text-gray-300">{data}</label>
+                                </div>)}
                             </div>
                         </fieldset>
 
