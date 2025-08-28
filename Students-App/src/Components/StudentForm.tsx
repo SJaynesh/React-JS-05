@@ -46,18 +46,20 @@ function StudentForm() {
     const submitStudentForm = (event: any) => {
         event.preventDefault();
 
-        const student: studentObject = {
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-            phone: phone,
-            gender: gender,
-            std: std,
-            hobby: hobby
-        };
+        // localStorage.setItem("username", "Om");
+
+        // const student: studentObject = {
+        //     firstName: firstName,
+        //     lastName: lastName,
+        //     email: email,
+        //     phone: phone,
+        //     gender: gender,
+        //     std: std,
+        //     hobby: hobby
+        // };
 
 
-        console.log(student);
+        // console.log(student);
 
         // const fname = document.getElementById('fname') as HTMLInputElement;
 
@@ -87,8 +89,8 @@ function StudentForm() {
     }
 
     return (
-        <div className="flex justify-center m-5">
-            <div className="w-lg max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
+        <div className="w-full flex justify-center">
+            <div className="w-full max-w-md p-6 bg-white border border-gray-200 rounded-xl shadow-md dark:bg-gray-800 dark:border-gray-700">
                 <form className="space-y-6" method="GET" action="#" onSubmit={submitStudentForm} >
                     <h5 className="text-xl font-medium text-gray-900 dark:text-white">Student Form</h5>
                     {/* First Name */}
@@ -164,7 +166,6 @@ function StudentForm() {
                         </fieldset>
 
                     </div>
-
 
                     <button type="submit" className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Add Student</button>
 
