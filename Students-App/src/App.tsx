@@ -23,7 +23,7 @@ export default function App() {
         <h1>You are Offline</h1>
       </>
     )
-  }[]
+  }
 
   return (
     <>
@@ -33,7 +33,6 @@ export default function App() {
           <StudentForm />
         </div>
       </div>
-
     </>
   )
 }
