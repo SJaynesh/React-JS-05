@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import Swal from "sweetalert2";
+
+
 
 function StudentForm() {
 
-    // let n: number = 10;
-    // let name: any = "Hello";
-
-    // name = 45;
 
     const [firstName, setFirstName] = useState<string>("");
     const [lastName, setLastName] = useState<string>("");
@@ -15,305 +15,410 @@ function StudentForm() {
     const [std, setStd] = useState<string>("");
     const [hobby, setHobby] = useState<string[]>([]);
     const [error, setError] = useState<any>({});
+    const [allStudents, setAllStudents] = useState<studentObject[]>(
+        JSON.parse(localStorage.getItem("students") || "[]")
+    );
+    const [editId, setEditId] = useState<number>();
 
-    const [allStudents, setAllStudents] = useState<studentObject[]>(JSON.parse(localStorage.getItem('students') || "[]"));
+    useEffect(() => {
+        localStorage.setItem("students", JSON.stringify(allStudents));
+    }, [allStudents]);
 
-    // useEffect(() => {
-    //     const data = localStorage.getItem('students');
-
-    //     console.log(data);
-
-
-    //     if (data != null) {
-    //         setAllStudents(JSON.parse(data));
-    //     }
-    // }, []);
 
 
     const allStd: string[] = [
-        '1st',
-        '2nd',
-        '3rd',
-        '4th',
-        '5th',
-        '6th',
-        '7th',
-        '8th',
-        '9th',
-        '10th',
-        '11th',
-        '12th',
+        "1st",
+        "2nd",
+        "3rd",
+        "4th",
+        "5th",
+        "6th",
+        "7th",
+        "8th",
+        "9th",
+        "10th",
+        "11th",
+        "12th",
     ];
 
     const allHobby: string[] = ["Reading", "Writing", "Sleeping", "Eating"];
 
     type studentObject = {
-        firstName: string,
-        lastName: string,
-        email: string,
-        phone: string,
-        gender: string,
-        std: string,
-        hobby: string[]
-    }
-
-    const validation = () => {
-        const newError: any = {}
-
-        if (!firstName.trim()) newError.firstName = "First Name is required...";
-
-        if (!lastName.trim()) newError.lastName = "Last Name is required...";
-
-        if (!email.trim()) newError.email = "Email is required...";
-        else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) newError.email = "email formate is wrong..."
-
-        if (!phone.trim()) newError.phone = "Phone Number is required...";
-        else if (!/^(?:\+?91[-\s]?|0)?[6-9]\d{9}$/.test(phone)) newError.phone = "phone is wrong..."
-
-
-        if (!gender.trim()) newError.gender = "Gender is required...";
-
-        if (!std.trim() && std !== 'Select') newError.std = "Std is required...";
-
-        if (hobby.length == 0) newError.hobby = "Please select at list one hobby";
-
-        setError(newError)
-
-        return Object.keys(newError).length;
-    }
-
-    const submitStudentForm = (event: any) => {
-        event.preventDefault();
-
-        if (validation() !== 0) {
-            return;
-        }
-
-        // localStorage.setItem("username", "Om");
-
-        const student: studentObject = {
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-            phone: phone,
-            gender: gender,
-            std: std,
-            hobby: hobby
-        };
-        const data = [...allStudents, student];
-
-        setAllStudents(data)
-
-        localStorage.setItem('students', JSON.stringify(data));
-
-        // const fname = document.getElementById('fname') as HTMLInputElement;
-
-        // console.log(fname.value);
-        setFirstName("")
-        setLastName("")
-        setEmail("")
-        setPhone("")
-        setGender("")
-        setStd("")
-        setHobby([])
-    }
-
-    // const getFirstName = (event: any) => setFirstName(event.target.value);
+        firstName: string;
+        lastName: string;
+        email: string;
+        phone: string;
+        gender: string;
+        std: string;
+        hobby: string[];
+    };
 
     const getHobby = (event: any) => {
         const value = event.target.value;
         const checked = event.target.checked;
-        // console.log("My Hobby : ", value);
-        // console.log("My Hobby : ", checked);
+        if (checked) setHobby((data) => [...data, value]);
+        else setHobby((data) => data.filter((element) => element !== value));
+    };
 
-        if (checked) {
-            setHobby(data => [...data, value])
+    const validation = () => {
+        const newError: any = {};
+        if (!firstName.trim()) newError.firstName = "First Name is required...";
+        if (!lastName.trim()) newError.lastName = "Last Name is required...";
+        if (!email.trim()) newError.email = "Email is required...";
+        else if (
+            !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)
+        )
+            newError.email = "Invalid email format";
+        if (!phone.trim()) newError.phone = "Phone Number is required...";
+        else if (!/^(?:\+?91[-\s]?|0)?[6-9]\d{9}$/.test(phone))
+            newError.phone = "Invalid phone number";
+        if (!gender.trim()) newError.gender = "Gender is required...";
+        if (!std.trim() || std === "Select") newError.std = "Std is required...";
+        if (hobby.length == 0) newError.hobby = "Please select at least one hobby";
+
+        setError(newError);
+        return Object.keys(newError).length;
+    };
+
+    const submitStudentForm = (event: any) => {
+        event.preventDefault();
+        if (validation() !== 0) return;
+
+        const student: studentObject = {
+            firstName,
+            lastName,
+            email,
+            phone,
+            gender,
+            std,
+            hobby,
+        };
+
+        if (editId === undefined) {
+            // const data = [...allStudents, student];
+            setAllStudents(allStudents => [...allStudents, student]);
+
+            toast.success("Student added successfully...");
         } else {
-            setHobby(data => data.filter(element => element !== value))
+            const data = allStudents.map((stud, index) =>
+                (editId === index) ? student : stud
+            );
+            console.log(data);
+            setAllStudents(data);
+            toast.success("Student updated successfully...");
         }
+
+        setFirstName("");
+        setLastName("");
+        setEmail("");
+        setPhone("");
+        setGender("");
+        setStd("");
+        setHobby([]);
+        setEditId(undefined)
+    };
+
+    const deleteStudent = (i: number) => {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "This student will be permanently deleted!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",   // Blue button
+            cancelButtonColor: "#d33",       // Red button
+            confirmButtonText: "Yes, delete it!",
+            cancelButtonText: "No, cancel",
+            reverseButtons: false, // Yes / No order reversed for better UX
+            background: "#fff",   // Light background
+        }).then((result) => {
+            if (result.isConfirmed) {
+                setAllStudents((allStudents) =>
+                    allStudents.filter((_, index) => index !== i)
+                );
+
+                // toast.success(
+                //     `${allStudents[i].firstName} ${allStudents[i].lastName} deleted successfully!`
+                // );
+
+                Swal.fire({
+                    title: "Deleted!",
+                    text: "Student has been removed.",
+                    icon: "success",
+                    confirmButtonColor: "#3085d6",
+                });
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                Swal.fire({
+                    title: "Cancelled",
+                    text: "Student data is safe 🙂",
+                    icon: "info",
+                    confirmButtonColor: "#3085d6",
+                });
+            }
+        });
+    };
+
+    const editStudent = (i: number) => {
+
+        setEditId(i);
+
+        // console.log(allStudents[i]);
+        setFirstName(allStudents[i].firstName);
+        setLastName(allStudents[i].lastName);
+        setEmail(allStudents[i].email);
+        setPhone(allStudents[i].phone);
+        setGender(allStudents[i].gender);
+        setStd(allStudents[i].std);
+        setHobby(allStudents[i].hobby);
     }
 
-    return (<>
-        <div className="w-full flex justify-center">
-            <div className="w-full max-w-md p-6 bg-white border border-gray-200 rounded-xl shadow-md dark:bg-gray-800 dark:border-gray-700">
-                <form className="space-y-6" method="GET" action="#" onSubmit={submitStudentForm} >
-                    <h5 className="text-xl font-medium text-gray-900 dark:text-white">Student Form</h5>
-                    {/* First Name */}
-                    <div>
-                        <label
-                            htmlFor="FName"
-                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                        >
-                            First Name
-                        </label>
-
-                        <input
-                            type="text"
-                            name="fname"
-                            value={firstName}
-                            onChange={(event) => setFirstName(event.target.value)}
-                            placeholder="Enter first name"
-                            className={`bg-gray-50 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-600 dark:placeholder-gray-400 dark:text-white transition-colors
-                                    ${error.firstName
-                                    ? "border border-red-500 focus:border-red-500 focus:ring-red-500"
-                                    : "border border-gray-500 focus:border-blue-500 focus:ring-blue-500"
-                                }`}
-                        />
-
-                        {error.firstName && (
-                            <p className="text-red-500 text-xs pt-1">{error.firstName}</p>
-                        )}
-                    </div>
 
 
+    return (
+        <>
+            {/* Form Card */}
+            <div className="w-full flex justify-center mt-10">
+                <div className="w-full max-w-lg p-8 bg-white border border-gray-200 rounded-2xl shadow-xl dark:bg-gray-800 dark:border-gray-700">
+                    <form className="space-y-6" onSubmit={submitStudentForm}>
+                        <h2 className="text-2xl font-semibold text-center text-gray-900 dark:text-white">
+                            {editId !== undefined ? "Update Student" : "Student Registration"}
+                        </h2>
 
 
-                    {/* Last Name */}
-                    <div>
-                        <label htmlFor="LName" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Last Name</label>
-                        <input type="text" name="lname" value={lastName} onChange={event => setLastName(event.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="Enter last name" />
-                        {error.lastName && <p className="text-red-500 text-xs pt-1">{error.lastName}</p>}
-                    </div>
+                        {/* First & Last Name in same row */}
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    First Name
+                                </label>
+                                <input
+                                    type="text"
+                                    value={firstName}
+                                    onChange={(e) => setFirstName(e.target.value)}
+                                    placeholder="Enter first name"
+                                    className={`w-full p-2.5 rounded-lg text-sm 
+                  ${error.firstName ? "border-red-500" : "border-gray-300"}
+                  bg-gray-50 border dark:bg-gray-700 dark:border-gray-600 dark:text-white`}
+                                />
+                                {error.firstName && (
+                                    <p className="text-red-500 text-xs mt-1">
+                                        {error.firstName}
+                                    </p>
+                                )}
+                            </div>
 
-                    {/* Email */}
-                    <div>
-                        <label htmlFor="Email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
-                        <input type="email" name="phone" value={email} onChange={event => setEmail(event.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="Enter email" />
-                        {error.email && <p className="text-red-500 text-xs pt-1">{error.email}</p>}
-                    </div>
+                            <div>
+                                <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    Last Name
+                                </label>
+                                <input
+                                    type="text"
+                                    value={lastName}
+                                    onChange={(e) => setLastName(e.target.value)}
+                                    placeholder="Enter last name"
+                                    className={`w-full p-2.5 rounded-lg text-sm 
+                  ${error.lastName ? "border-red-500" : "border-gray-300"}
+                  bg-gray-50 border dark:bg-gray-700 dark:border-gray-600 dark:text-white`}
+                                />
+                                {error.lastName && (
+                                    <p className="text-red-500 text-xs mt-1">{error.lastName}</p>
+                                )}
+                            </div>
+                        </div>
 
-                    {/* Phone */}
-                    <div>
-                        <label htmlFor="Phone" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Phone</label>
-                        <input type="number" name="phone" value={phone} onChange={event => setPhone(event.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="Enter phone number" />
-                        {error.phone && <p className="text-red-500 text-xs pt-1">{error.phone}</p>}
-                    </div>
+                        {/* Email */}
+                        <div>
+                            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Email
+                            </label>
+                            <input
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="Enter email"
+                                className={`w-full p-2.5 rounded-lg text-sm 
+                ${error.email ? "border-red-500" : "border-gray-300"}
+                bg-gray-50 border dark:bg-gray-700 dark:border-gray-600 dark:text-white`}
+                            />
+                            {error.email && (
+                                <p className="text-red-500 text-xs mt-1">{error.email}</p>
+                            )}
+                        </div>
 
-                    {/* Gender */}
-                    <div>
-                        <label htmlFor="Gender" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Gender</label>
+                        {/* Phone */}
+                        <div>
+                            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Phone
+                            </label>
+                            <input
+                                type="text"
+                                value={phone}
+                                onChange={(e) => setPhone(e.target.value)}
+                                placeholder="Enter phone number"
+                                className={`w-full p-2.5 rounded-lg text-sm 
+                ${error.phone ? "border-red-500" : "border-gray-300"}
+                bg-gray-50 border dark:bg-gray-700 dark:border-gray-600 dark:text-white`}
+                            />
+                            {error.phone && (
+                                <p className="text-red-500 text-xs mt-1">{error.phone}</p>
+                            )}
+                        </div>
 
-                        <fieldset>
-                            <div className="flex items-center mb-4">
-                                <input type="radio" name="gender" value="Male" onChange={event => setGender(event.target.value)} checked={gender === 'Male'} className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" />
-                                <label htmlFor="gender-male" className="block ms-2  text-sm font-medium text-gray-900 dark:text-gray-300">
+                        {/* Gender */}
+                        <div>
+                            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Gender
+                            </label>
+                            <div className="flex gap-6 mt-2">
+                                <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                                    <input
+                                        type="radio"
+                                        name="gender"
+                                        value="Male"
+                                        checked={gender === "Male"}
+                                        onChange={(e) => setGender(e.target.value)}
+                                        className="text-blue-600 focus:ring-blue-500"
+                                    />
                                     Male
                                 </label>
-
-                                <input type="radio" name="gender" value="Female" onChange={event => setGender(event.target.value)} checked={gender === 'Female'} className="ml-4 w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" />
-                                <label htmlFor="gender-female" className="block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                                    <input
+                                        type="radio"
+                                        name="gender"
+                                        value="Female"
+                                        checked={gender === "Female"}
+                                        onChange={(e) => setGender(e.target.value)}
+                                        className="text-pink-600 focus:ring-pink-500"
+                                    />
                                     Female
                                 </label>
                             </div>
-                            {error.gender && <p className="text-red-500 text-xs pt-1">{error.gender}</p>}
-                        </fieldset>
+                            {error.gender && (
+                                <p className="text-red-500 text-xs mt-1">{error.gender}</p>
+                            )}
+                        </div>
 
+                        {/* Std */}
+                        <div>
+                            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Std
+                            </label>
+                            <select
+                                value={std}
+                                onChange={(e) => setStd(e.target.value)}
+                                className={`w-full p-2.5 rounded-lg text-sm 
+                ${error.std ? "border-red-500" : "border-gray-300"}
+                bg-gray-50 border dark:bg-gray-700 dark:border-gray-600 dark:text-white`}
+                            >
+                                <option>Select</option>
+                                {allStd.map((element, index) => (
+                                    <option key={index}>{element}</option>
+                                ))}
+                            </select>
+                            {error.std && (
+                                <p className="text-red-500 text-xs mt-1">{error.std}</p>
+                            )}
+                        </div>
 
-                    </div>
-
-                    {/* Std */}
-                    <div>
-                        <label htmlFor="std" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Std</label>
-                        <select value={std} onChange={event => setStd(event.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-
-                            <option>Select</option>
-                            {allStd.map((element, index) => <option key={index}>{element}</option>)}
-                        </select>
-                        {error.std && <p className="text-red-500 text-xs pt-1">{error.std}</p>}
-                    </div>
-
-                    {/* Hobby */}
-                    <div>
-                        <label htmlFor="hobby" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Hobby</label>
-
-
-                        <fieldset>
-                            <legend className="sr-only">Checkbox variants</legend>
-
-                            <div className="flex items-center mb-4">
-                                {allHobby.map((data, index) => <div className="ml-1" key={index}>
-                                    <input type="checkbox" value={data} onChange={getHobby} checked={hobby.includes(data)} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                                    <label htmlFor="checkbox-1" className="ms-1 text-sm font-medium text-gray-900 dark:text-gray-300">{data}</label>
-                                </div>)}
-
+                        {/* Hobby */}
+                        <div>
+                            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Hobby
+                            </label>
+                            <div className="flex flex-wrap gap-4 mt-2">
+                                {allHobby.map((data, index) => (
+                                    <label
+                                        key={index}
+                                        className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300"
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            value={data}
+                                            checked={hobby.includes(data)}
+                                            onChange={getHobby}
+                                            className="text-blue-600 focus:ring-blue-500"
+                                        />
+                                        {data}
+                                    </label>
+                                ))}
                             </div>
-                            {error.hobby && <p className="text-red-500 text-xs pt-1">{error.hobby}</p>}
-                        </fieldset>
+                            {error.hobby && (
+                                <p className="text-red-500 text-xs mt-1">{error.hobby}</p>
+                            )}
+                        </div>
 
-                    </div>
+                        {/* Submit */}
+                        <button
+                            type="submit"
+                            className={`w-full py-2.5 rounded-lg ${(editId === undefined) ? "bg-blue-600 hover:bg-blue-700" : "bg-yellow-400 hover:bg-yellow-500"}  text-white font-medium text-sm transition-colors`}
+                        >
+                            {(editId === undefined) ? "Add Student" : "Update Student"}
+                        </button>
+                    </form>
+                </div>
+            </div>
 
-                    <button type="submit" className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Add Student</button>
+            {/* Student Table */}
+            <div className="max-w-6xl mx-auto mt-12">
+                <h2 className="text-3xl font-semibold text-center mb-6 text-gray-800 dark:text-white">
+                    Students List
+                </h2>
 
-                </form>
-            </div >
-        </div >
+                <div className="overflow-x-auto shadow-lg rounded-2xl border border-gray-200 dark:border-gray-700">
+                    <table className="w-full text-sm text-left text-gray-600 dark:text-gray-300">
+                        <thead className="text-xs uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-300">
+                            <tr>
+                                <th className="px-6 py-3">No</th>
+                                <th className="px-6 py-3">First Name</th>
+                                <th className="px-6 py-3">Last Name</th>
+                                <th className="px-6 py-3">Email</th>
+                                <th className="px-6 py-3">Phone</th>
+                                <th className="px-6 py-3">Gender</th>
+                                <th className="px-6 py-3">Std</th>
+                                <th className="px-6 py-3">Hobby</th>
+                                <th className="px-6 py-3 text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {allStudents.map((stud, index) => (
+                                <tr
+                                    key={index}
+                                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                                >
+                                    <td className="px-6 py-3">{index + 1}</td>
+                                    <td className="px-6 py-3">{stud.firstName}</td>
+                                    <td className="px-6 py-3">{stud.lastName}</td>
+                                    <td className="px-6 py-3">{stud.email}</td>
+                                    <td className="px-6 py-3">{stud.phone}</td>
+                                    <td className="px-6 py-3">{stud.gender}</td>
+                                    <td className="px-6 py-3">{stud.std}</td>
+                                    <td className="px-6 py-3">{stud.hobby.join(", ")}</td>
+                                    <td className="px-6 py-3 flex gap-2 justify-center">
+                                        <button onClick={() => editStudent(index)} className="px-3 py-1 rounded-lg bg-yellow-400 hover:bg-yellow-500 text-white text-xs font-medium">
+                                            Edit
+                                        </button>
+                                        <button onClick={() => deleteStudent(index)} className="px-3 py-1 rounded-lg bg-red-500 hover:bg-red-600 text-white text-xs font-medium">
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                            {allStudents.length === 0 && (
+                                <tr>
+                                    <td
+                                        colSpan={8}
+                                        className="text-center py-4 text-gray-500 dark:text-gray-400"
+                                    >
+                                        No students added yet.
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-        <h2 className="text-5xl text-center m-5">Students Table</h2>
-        <div className="m-5 flex justify-center relative overflow-x-auto shadow-md sm:rounded-lg ">
-            <table className="w-svw  text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                    <tr>
-                        <th scope="col" className="px-6 py-3">
-                            First Name
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                            Last Name
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                            Email
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                            Phone
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                            Gender
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                            Std
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                            Hobby
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                            Action
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {allStudents.map((stud, index) =>
-                        <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
-                            <td scope="row" className="px-6 py-4 ">
-                                {stud.firstName}
-                            </td>
-                            <td className="px-6 py-4">
-                                {stud.lastName}
-                            </td>
-                            <td className="px-6 py-4">
-                                {stud.email}
-                            </td>
-                            <td className="px-6 py-4">
-                                {stud.phone}
-                            </td>
-                            <td className="px-6 py-4">
-                                {stud.gender}
-                            </td>
-                            <td className="px-6 py-4">
-                                {stud.std}
-                            </td>
-                            <td className="px-6 py-4">
-                                {stud.hobby.join(", ")}
-                            </td>
-                            <td className="px-6 py-4 text-right">
-                                <button>Edit</button>
-                                <button className="ml-1" onClick={}>Delete</button>
-                            </td>
-                        </tr>
-                    )}
-
-                </tbody>
-            </table>
-        </div>
-    </>
+            <ToastContainer />
+        </>
     );
 }
 

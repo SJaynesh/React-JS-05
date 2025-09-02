@@ -27,7 +27,7 @@ export default function App() {
 
   return (
     <>
-      <div className="w-full h-screen" style={{ backgroundColor: theme === 'light' ? "white" : "black" }}>
+      <div className="w-full min-h-screen" style={{ backgroundColor: theme === 'light' ? "white" : "black" }}>
         <NavBar theme={theme} toggleTheme={toggleTheme} />
         <div className="pt-24">
           <StudentForm />
