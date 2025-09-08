@@ -2,11 +2,7 @@ import { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import Swal from "sweetalert2";
 
-
-
 function StudentForm() {
-
-
     const [firstName, setFirstName] = useState<string>("");
     const [lastName, setLastName] = useState<string>("");
     const [email, setEmail] = useState<string>("");
@@ -23,8 +19,6 @@ function StudentForm() {
     useEffect(() => {
         localStorage.setItem("students", JSON.stringify(allStudents));
     }, [allStudents]);
-
-
 
     const allStd: string[] = [
         "1st",
@@ -122,7 +116,7 @@ function StudentForm() {
         Swal.fire({
             title: "Are you sure?",
             text: "This student will be permanently deleted!",
-            icon: "warning",
+            icon: "success",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",   // Blue button
             cancelButtonColor: "#d33",       // Red button
