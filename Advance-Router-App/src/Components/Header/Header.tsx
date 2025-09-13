@@ -52,6 +52,18 @@ export default function Header() {
                     >
                         Blog
                     </NavLink>
+
+                    <NavLink
+                        to="/github/SJaynesh"
+                        className={({ isActive }) =>
+                            `transition-colors ${isActive
+                                ? "text-red-800 dark:text-red-400 font-semibold"
+                                : "text-gray-700 dark:text-gray-300 hover:text-red-800 dark:hover:text-red-400"
+                            }`
+                        }
+                    >
+                        GitHub
+                    </NavLink>
                 </div>
 
             </div>
