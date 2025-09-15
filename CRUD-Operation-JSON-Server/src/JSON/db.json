@@ -1,0 +1,49 @@
+{
+    "products": [
+        {
+            "id": 1,
+            "name": "Wireless Headphones",
+            "price": 2499,
+            "image": "https://www.gonoise.com/cdn/shop/files/CompressJPEG.online_500x500-image_dc932e66-6b36-4007-8744-7ada80add026.png?v=1709898619",
+            "category": "electronics",
+            "stock": 25,
+            "description": "High-quality wireless headphones with noise cancellation and deep bass sound."
+        },
+        {
+            "id": 2,
+            "name": "Men's Cotton T-Shirt",
+            "price": 799,
+            "image": "https://p3india.com/cdn/shop/files/2269Ocean_3b1658fd-ed3b-4142-b0db-5c86b476829c.png?v=1643369240&width=1445",
+            "category": "fashion",
+            "stock": 100,
+            "description": "Soft cotton regular-fit T-shirt for casual wear, available in multiple colors."
+        },
+        {
+            "id": 3,
+            "name": "Ceramic Coffee Mug",
+            "price": 299,
+            "image": "https://images.jdmagicbox.com/quickquotes/images_main/customized-printed-ceramic-coffee-mug-2217582244-9a1dmi4u.png",
+            "category": "home",
+            "stock": 60,
+            "description": "Durable ceramic coffee mug with a matte finish, perfect for hot and cold beverages."
+        },
+        {
+            "id": 4,
+            "name": "Yoga Mat",
+            "price": 1199,
+            "image": "https://vasukifitness.com/cdn/shop/files/adyg-10200pk-tie-dye-yoga-mat---hazy-rose-02_54366774052.png?v=1718004833&width=1445",
+            "category": "sports",
+            "stock": 40,
+            "description": "Eco-friendly yoga mat with non-slip texture and excellent grip, ideal for home workouts."
+        },
+        {
+            "id": 5,
+            "name": "Smartwatch",
+            "price": 3499,
+            "image": "https://www.gonoise.com/cdn/shop/files/1.2_84f528d0-dad1-45ea-bbc6-e9c7c5d0a58a.png?v=1700211662",
+            "category": "electronics",
+            "stock": 15,
+            "description": "Feature-packed smartwatch with heart-rate monitor, step tracking, and notifications."
+        }
+    ]
+}
