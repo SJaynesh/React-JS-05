@@ -6,6 +6,15 @@ class ProductAPIService {
         const data = await res.json();
         return data;
     }
+
+    async addProductData(body: any) {
+        const res = await fetch(this.productURL, {
+            method: "POST",
+            body: JSON.stringify(body)
+        });
+
+        return res.ok;
+    }
 }
 
 export interface ProductType {

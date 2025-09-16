@@ -1,6 +1,63 @@
+import { useState } from "react"
+import { productAPIService } from "../../Service/ProductAPIService";
 
 
 export default function AddProductPage() {
+
+    const [productFormData, setProductFormData] = useState({
+        id: Math.floor(Math.random() * 10000),
+        name: "",
+        price: "",
+        image: "",
+        category: "",
+        stock: "",
+        description: "",
+    });
+
+    const handleEvent = (event: any) => {
+
+        const { name, value } = event.target;
+
+        setProductFormData(prev => ({ ...prev, [name]: value }))
+        /*
+         {
+            id: 5702,
+            name: "",
+            price: "4561",
+            image: "",
+            category: "",
+            stock: "",
+            description: "",
+         }
+        */
+    }
+
+    const handleSubmit = async (event: any) => {
+        event.preventDefault();
+
+        console.log(productFormData);
+
+        const status = await productAPIService.addProductData(productFormData);
+
+
+        if (status) {
+            console.log("Successfully added...");
+
+            setProductFormData({
+                id: Math.floor(Math.random() * 10000),
+                name: "",
+                price: "",
+                image: "",
+                category: "",
+                stock: "",
+                description: "",
+            })
+        } else {
+            console.log("failed...");
+        }
+
+    }
+
     return (
         <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 via-white to-blue-50 px-4">
 
@@ -11,7 +68,7 @@ export default function AddProductPage() {
 
             {/* Card Container */}
             <div className="bg-white shadow-lg rounded-2xl p-6 w-full max-w-lg">
-                <form className="space-y-6">
+                <form className="space-y-6" onSubmit={handleSubmit}>
 
                     {/* Product Name */}
                     <div>
@@ -21,7 +78,9 @@ export default function AddProductPage() {
                         <input
                             type="text"
                             id="productName"
-                            name="productName"
+                            value={productFormData.name}
+                            name="name"
+                            onChange={handleEvent}
                             placeholder="Enter product name"
                             className="block w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none"
                             required
@@ -36,7 +95,9 @@ export default function AddProductPage() {
                         <input
                             type="number"
                             id="price"
+                            value={productFormData.price}
                             name="price"
+                            onChange={handleEvent}
                             placeholder="Enter price"
                             className="block w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none"
                             required
@@ -51,7 +112,9 @@ export default function AddProductPage() {
                         <input
                             type="url"
                             id="image"
+                            value={productFormData.image}
                             name="image"
+                            onChange={handleEvent}
                             placeholder="Enter image URL"
                             className="block w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none"
                             required
@@ -67,6 +130,8 @@ export default function AddProductPage() {
                             <select
                                 id="category"
                                 name="category"
+                                value={productFormData.category}
+                                onChange={handleEvent}
                                 className="block w-full rounded-lg border border-gray-300 px-3 py-2 bg-white focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none"
                                 required
                             >
@@ -86,6 +151,8 @@ export default function AddProductPage() {
                                 type="number"
                                 id="stock"
                                 name="stock"
+                                value={productFormData.stock}
+                                onChange={handleEvent}
                                 placeholder="Enter stock quantity"
                                 className="block w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none"
                                 required
@@ -101,6 +168,8 @@ export default function AddProductPage() {
                         <textarea
                             id="description"
                             name="description"
+                            value={productFormData.description}
+                            onChange={handleEvent}
                             rows={4}
                             placeholder="Enter product description"
                             className="block w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none"
