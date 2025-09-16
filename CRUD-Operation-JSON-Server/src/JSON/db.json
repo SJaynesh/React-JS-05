@@ -44,6 +44,15 @@
             "category": "electronics",
             "stock": 15,
             "description": "Feature-packed smartwatch with heart-rate monitor, step tracking, and notifications."
+        },
+        {
+            "id": 1,
+            "name": "Wireless Headphones",
+            "price": 2499,
+            "image": "https://www.gonoise.com/cdn/shop/files/CompressJPEG.online_500x500-image_dc932e66-6b36-4007-8744-7ada80add026.png?v=1709898619",
+            "category": "electronics",
+            "stock": 25,
+            "description": "High-quality wireless headphones with noise cancellation and deep bass sound."
         }
     ]
 }
