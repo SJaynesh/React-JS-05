@@ -1,8 +1,24 @@
-import { useLoaderData } from "react-router";
-import type { ProductType } from "../../Service/ProductAPIService";
+import { useLoaderData, useNavigate } from "react-router";
+import { productAPIService, type ProductType } from "../../Service/ProductAPIService";
+import { useState } from "react";
 
 export default function ViewProductPage() {
-    const allProducts: ProductType[] = useLoaderData();
+    const data: ProductType[] = useLoaderData();
+
+    const [allProducts, setAllProduct] = useState(data || [])
+
+    const navigator = useNavigate();
+
+    const deleteProduct = async (id: string) => {
+
+
+        if (await productAPIService.deleteProduct(id)) {
+            setAllProduct(await productAPIService.fetchAllProudct());
+            alert("Product deleted successfully...");
+        } else {
+            alert("Product deletion failed...");
+        }
+    }
 
     return (
         <div className="min-h-screen w-full px-4 py-10 bg-gradient-to-br from-gray-50 via-white to-blue-50">
@@ -15,6 +31,7 @@ export default function ViewProductPage() {
                 <table className="min-w-full bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200">
                     <thead className="bg-black text-white">
                         <tr>
+                            <th className="py-3 px-6 text-left">NO</th>
                             <th className="py-3 px-6 text-left">ID</th>
                             <th className="py-3 px-6 text-left">Image</th>
                             <th className="py-3 px-6 text-left">Name</th>
@@ -25,11 +42,12 @@ export default function ViewProductPage() {
                         </tr>
                     </thead>
                     <tbody>
-                        {allProducts.map((product) => (
+                        {allProducts.map((product, index) => (
                             <tr
                                 key={product.id}
                                 className="border-b last:border-none hover:bg-gray-50 transition-colors"
                             >
+                                <td className="py-4 px-6 text-gray-700 font-medium">{index + 1}</td>
                                 <td className="py-4 px-6 text-gray-700 font-medium">{product.id}</td>
                                 <td className="py-4 px-6">
                                     <img
@@ -40,7 +58,7 @@ export default function ViewProductPage() {
                                 </td>
                                 <td className="py-4 px-6 text-gray-800 font-semibold">{product.name}</td>
                                 <td className="py-4 px-6 text-gray-600">{product.category}</td>
-                                <td className="py-4 px-6 text-gray-800 font-bold">₹{product.price}</td>
+                                <td className="py-4 px-6 text-gray-800 font-bold">${product.price}</td>
                                 <td className="py-4 px-6">
                                     <span
                                         className={`px-2 py-1 rounded-full text-sm font-medium ${product.stock > 0 ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
@@ -50,10 +68,10 @@ export default function ViewProductPage() {
                                     </span>
                                 </td>
                                 <td className="py-4 px-6 flex gap-2">
-                                    <button className="bg-yellow-500 text-white px-4 py-1 rounded-lg hover:bg-yellow-600 transition-colors shadow-sm">
+                                    <button onClick={() => navigator(`/edit-product/${product.id}`)} className="bg-yellow-500 text-white px-4 py-1 rounded-lg hover:bg-yellow-600 transition-colors shadow-sm">
                                         Edit
                                     </button>
-                                    <button className="bg-red-500 text-white px-4 py-1 rounded-lg hover:bg-red-600 transition-colors shadow-sm">
+                                    <button onClick={() => deleteProduct(product.id)} className="bg-red-500 text-white px-4 py-1 rounded-lg hover:bg-red-600 transition-colors shadow-sm">
                                         Delete
                                     </button>
                                 </td>

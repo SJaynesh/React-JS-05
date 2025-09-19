@@ -32,7 +32,7 @@ export default function HomePage() {
                             <h2 className="text-xl font-semibold text-gray-900">{product.name}</h2>
                             <p className="text-gray-600 text-sm">{product.description}</p>
                             <div className="flex justify-between items-center mt-3">
-                                <span className="text-blue-600 font-bold text-lg">₹{product.price}</span>
+                                <span className="text-blue-600 font-bold text-lg">${product.price}</span>
                                 <span className={`text-sm font-medium ${product.stock > 0 ? "text-green-600" : "text-red-600"}`}>
                                     {product.stock > 0 ? `In Stock: ${product.stock}` : "Out of Stock"}
                                 </span>

@@ -5,12 +5,21 @@ import AddProductPage from "../Pages/Add Products/AddProductPage";
 import ViewProudctPage from "../Pages/View Products/ViewProduct";
 import ContactPage from "../Pages/Contact/ContactPage";
 import { productAPIService } from "../Service/ProductAPIService";
+import EditProductPage from "../Pages/Edit Product/EditProductPage";
 
+
+export const routerNames = {
+    home: '/',
+    addProduct: '/add-product',
+    viewProduct: '/view-products',
+    editProduct: '/edit-product/:id',
+    contact: '/contact',
+}
 
 
 export const routes = createBrowserRouter([
     {
-        path: "/",
+        path: routerNames.home,
         Component: App,
         children: [
             {
@@ -21,18 +30,26 @@ export const routes = createBrowserRouter([
                 Component: HomePage,
             },
             {
-                path: 'add-product',
+                path: routerNames.addProduct,
                 Component: AddProductPage,
             },
             {
-                path: 'view-products',
+                path: routerNames.viewProduct,
                 loader: async () => {
                     return await productAPIService.fetchAllProudct();
                 },
                 Component: ViewProudctPage,
             },
             {
-                path: 'contact',
+                path: routerNames.editProduct,
+                loader: async ({ params }) => {
+                    console.log(params.id);
+                    return await productAPIService.fetchSingleProduct(params.id as string);
+                },
+                Component: EditProductPage,
+            },
+            {
+                path: routerNames.contact,
                 Component: ContactPage,
             }
         ]

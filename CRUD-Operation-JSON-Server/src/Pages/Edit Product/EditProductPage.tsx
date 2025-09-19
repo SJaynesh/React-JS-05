@@ -1,17 +1,21 @@
 import { useState } from "react"
 import { productAPIService } from "../../Service/ProductAPIService";
+import { useLoaderData, useNavigate } from "react-router";
+import { routerNames } from "../../Routes/routes";
 
 
-export default function AddProductPage() {
 
+export default function EditProductPage() {
+    const data = useLoaderData();
+    const navigator = useNavigate();
     const [productFormData, setProductFormData] = useState({
-        id: Math.floor(Math.random() * 10000).toString(),
-        name: "",
-        price: "",
-        image: "",
-        category: "",
-        stock: "",
-        description: "",
+        id: data.id,
+        name: data.name,
+        price: data.price,
+        image: data.image,
+        category: data.category,
+        stock: data.stock,
+        description: data.description,
     });
 
     const handleEvent = (event: any) => {
@@ -36,25 +40,12 @@ export default function AddProductPage() {
         event.preventDefault();
 
         console.log(productFormData);
-
-        const status = await productAPIService.addProductData(productFormData);
-
-        if (status) {
-            alert("Successfully added...");
-
-            setProductFormData({
-                id: Math.floor(Math.random() * 10000).toString(),
-                name: "",
-                price: "",
-                image: "",
-                category: "",
-                stock: "",
-                description: "",
-            })
+        if (await productAPIService.updateProduct(data.id, productFormData)) {
+            alert("Product updated successfully..");
+            navigator(routerNames.viewProduct);
         } else {
-            alert("failed...");
+            alert("Product updation failed...");
         }
-
     }
 
     return (
@@ -62,7 +53,7 @@ export default function AddProductPage() {
 
             {/* Title */}
             <h1 className="text-4xl md:text-5xl font-extrabold text-gray-800 mb-8 text-center">
-                Add New Product
+                Edit Product
             </h1>
 
             {/* Card Container */}
@@ -179,9 +170,9 @@ export default function AddProductPage() {
                     {/* Submit Button */}
                     <button
                         type="submit"
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg shadow-md transition duration-200"
+                        className="w-full bg-amber-400 hover:bg-amber-600 text-white font-medium py-2.5 rounded-lg shadow-md transition duration-200"
                     >
-                        Add Product
+                        Edit Product
                     </button>
                 </form>
             </div>
