@@ -1,17 +1,30 @@
 import { useLoaderData, useNavigate } from "react-router";
 import { productAPIService, type ProductType } from "../../Service/ProductAPIService";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function ViewProductPage() {
     const data: ProductType[] = useLoaderData();
 
     const [allProducts, setAllProduct] = useState(data || [])
+    const [search, setSearch] = useState("");
+    const [sort, setSort] = useState("az");
+    const [price, setPrice] = useState(0);
+    const [maxAndMinPrice, setMaxaAndMinPrice] = useState<number[]>([])
 
     const navigator = useNavigate();
 
+    useEffect(() => {
+        if (allProducts.length > 0) {
+            const allPrices = allProducts.map(p => p.price);
+
+            const max = Math.max(...allPrices);
+            const min = Math.min(...allPrices);
+
+            setMaxaAndMinPrice([min, max])
+        }
+    }, [allProducts])
+
     const deleteProduct = async (id: string) => {
-
-
         if (await productAPIService.deleteProduct(id)) {
             setAllProduct(await productAPIService.fetchAllProudct());
             alert("Product deleted successfully...");
@@ -20,12 +33,44 @@ export default function ViewProductPage() {
         }
     }
 
+    const filterProducts = allProducts.filter((product) => {
+        const searchData = product.name.toLowerCase().includes(search.toLowerCase()) ||
+            product.category.toLowerCase().includes(search.toLowerCase()) ||
+            product.id.includes(search);
+
+        const priceData = product.price >= price;
+        return searchData && priceData;
+    }).sort((a, b) => {
+        if (sort === 'az') {
+            return a.name.localeCompare(b.name);
+        } else {
+            return b.name.localeCompare(a.name);
+        }
+    });
+
     return (
         <div className="min-h-screen w-full px-4 py-10 bg-gradient-to-br from-gray-50 via-white to-blue-50">
             {/* Page Title */}
             <h1 className="text-5xl mt-20 md:text-6xl font-extrabold text-gray-800 text-center mb-12">
-                🛒 View Products
+                🛒 View Products {price}
             </h1>
+
+            {/* Search Input Field */}
+            <div className="w-full max-w-7xl mx-auto flex justify-center mb-8 px-4">
+                <input
+                    type="text"
+                    placeholder="🔍 Search for products by name or category..."
+                    onChange={(event) => setSearch(event.target.value)}
+                    className="w-full max-w-lg px-4 py-3 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                />
+
+                <select value={sort} onChange={event => setSort(event.target.value)}>
+                    <option value="az">A-Z</option>
+                    <option value="za">Z-A</option>
+                </select>
+
+                <input type="range" onChange={event => setPrice(Number.parseInt(event.target.value))} min={maxAndMinPrice[0]} max={maxAndMinPrice[1]} />
+            </div>
 
             <div className="overflow-x-auto w-full max-w-7xl mx-auto">
                 <table className="min-w-full bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200">
@@ -42,7 +87,7 @@ export default function ViewProductPage() {
                         </tr>
                     </thead>
                     <tbody>
-                        {allProducts.map((product, index) => (
+                        {filterProducts.map((product, index) => (
                             <tr
                                 key={product.id}
                                 className="border-b last:border-none hover:bg-gray-50 transition-colors"
@@ -80,7 +125,7 @@ export default function ViewProductPage() {
                     </tbody>
                 </table>
 
-                {allProducts.length === 0 && (
+                {filterProducts.length === 0 && (
                     <p className="text-center text-gray-500 py-10">No products available</p>
                 )}
             </div>
