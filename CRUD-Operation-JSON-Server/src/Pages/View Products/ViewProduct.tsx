@@ -52,25 +52,51 @@ export default function ViewProductPage() {
         <div className="min-h-screen w-full px-4 py-10 bg-gradient-to-br from-gray-50 via-white to-blue-50">
             {/* Page Title */}
             <h1 className="text-5xl mt-20 md:text-6xl font-extrabold text-gray-800 text-center mb-12">
-                🛒 View Products {price}
+                🛒 View Products
             </h1>
 
-            {/* Search Input Field */}
-            <div className="w-full max-w-7xl mx-auto flex justify-center mb-8 px-4">
-                <input
-                    type="text"
-                    placeholder="🔍 Search for products by name or category..."
-                    onChange={(event) => setSearch(event.target.value)}
-                    className="w-full max-w-lg px-4 py-3 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-                />
+            {/* Search, Sort & Filter Section */}
+            <div className="w-full max-w-7xl mx-auto mb-8 px-4">
+                <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-4 rounded-2xl shadow-md">
 
-                <select value={sort} onChange={event => setSort(event.target.value)}>
-                    <option value="az">A-Z</option>
-                    <option value="za">Z-A</option>
-                </select>
+                    {/* Search Input */}
+                    <input
+                        type="text"
+                        placeholder="🔍 Search products by name or category..."
+                        onChange={(event) => setSearch(event.target.value)}
+                        className="w-full md:flex-1 px-4 py-3 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                    />
 
-                <input type="range" onChange={event => setPrice(Number.parseInt(event.target.value))} min={maxAndMinPrice[0]} max={maxAndMinPrice[1]} />
+                    {/* Sort Dropdown */}
+                    <select
+                        value={sort}
+                        onChange={(event) => setSort(event.target.value)}
+                        className="px-4 py-3 rounded-full border border-gray-300 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                    >
+                        <option value="az">🔼 Sort: A → Z</option>
+                        <option value="za">🔽 Sort: Z → A</option>
+                    </select>
+
+                    {/* Price Filter */}
+                    <div className="flex flex-col items-center w-full md:w-auto">
+                        <label className="text-sm text-gray-600 mb-1">💰 Price Range</label>
+                        <div className="flex items-center gap-3 w-full">
+                            <span className="text-sm text-gray-500">{maxAndMinPrice[0]}</span>
+                            <input
+                                type="range"
+                                value={price}
+                                onChange={(event) => setPrice(Number.parseInt(event.target.value))}
+                                min={maxAndMinPrice[0]}
+                                max={maxAndMinPrice[1]}
+                                className="w-full accent-blue-500 cursor-pointer"
+                            />
+                            <span className="text-sm font-semibold text-gray-700">{price}</span>
+                        </div>
+                    </div>
+
+                </div>
             </div>
+
 
             <div className="overflow-x-auto w-full max-w-7xl mx-auto">
                 <table className="min-w-full bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200">
