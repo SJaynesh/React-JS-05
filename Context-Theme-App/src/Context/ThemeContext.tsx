@@ -19,7 +19,7 @@ type ThemeType = {
 // Context
 export const ThemeContext = createContext<ThemeType>({ theme: "light", toggleTheme: () => { } });
 
-// custom hook
+// Custom Hook
 export function useTheme() {
     return useContext(ThemeContext);
 }
